@@ -1,42 +1,34 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+import Image from "next/image";
+import Link from "next/link";
+import { Client } from "@notionhq/client";
+import styles from "./page.module.css";
 
-export default function Home() {
+export default async function Home() {
+  const recipes = await getRecipes();
+  
   return (
     <div className={styles.container}>
+      <h1 className={styles.title}>Welcome to MiKitchen!</h1>
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js 13!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-
+        <p>Últimas recetas</p>
         <div className={styles.grid}>
-          <a href="https://beta.nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js 13</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Explore the Next.js 13 playground.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/templates/next.js/app-directory?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>Deploy your Next.js site to a public URL with Vercel.</p>
-          </a>
+          {recipes.map((recipe) => {
+            return (
+              <Link
+                key={recipe.id}
+                href={`/recipe/${recipe.id}`}
+                className={styles.card}
+              >
+                <h2>{recipe.properties.Name.title[0].text.content}</h2>
+                <Image
+                  src={`${recipe.cover.file.url}`}
+                  alt={`Cover image for recipe ${recipe.properties.Name.title[0].text.content}`}
+                  width={220}
+                  height={180}
+                />
+              </Link>
+            );
+          })}
         </div>
       </main>
 
@@ -46,12 +38,29 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
+          Powered by{" "}
           <span className={styles.logo}>
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span>
         </a>
       </footer>
     </div>
-  )
+  );
+}
+
+export async function getRecipes() {
+  const notion = new Client({ auth: process.env.NOTION_API_KEY });
+
+  const databaseId = "0902a65f0e1d4c3891d1db544993f4c4";
+  const response = await notion.databases.query({
+    database_id: databaseId,
+    filter: {
+      property: "Tags",
+      status: {
+        equals: "Done",
+      },
+    },
+  });
+
+  return response.results;
 }
