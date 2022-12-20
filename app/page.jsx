@@ -5,12 +5,11 @@ import styles from "./page.module.css";
 
 export default async function Home() {
   const recipes = await getRecipes();
-  
+
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Welcome to MiKitchen!</h1>
+      <h1 className={styles.title}>Bienvenido a miKitchen!</h1>
       <main className={styles.main}>
-        <p>Últimas recetas</p>
         <div className={styles.grid}>
           {recipes.map((recipe) => {
             return (
@@ -31,19 +30,6 @@ export default async function Home() {
           })}
         </div>
       </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{" "}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
     </div>
   );
 }
