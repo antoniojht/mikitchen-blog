@@ -37,9 +37,13 @@ export default async function Home() {
           <h2 className="text-2xl font bold">Categorias</h2>
           {categories.map((category) => {
             return (
-              <div className="inline pr-5 text-center" p key={category}>
+              <Link
+                className="inline pr-5 text-center"
+                href={`category/${category}`}
+                key={category}
+              >
                 {category}
-              </div>
+              </Link>
             );
           })}
         </div>
@@ -60,6 +64,7 @@ export async function getRecipes() {
         equals: "Done",
       },
     },
+    page_size: 4,
   });
 
   return response.results;
