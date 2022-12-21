@@ -1,12 +1,12 @@
 import Image from "next/image";
 import { Client } from "@notionhq/client";
 import styles from "./page.module.css";
-import { Avatar } from "../../components/Avatar";
-import getUserInfo from "../../constants/userInfo";
+import { Avatar } from "../../../components/Avatar";
+import getUserInfo from "../../../utils/constants/userInfo";
 import {
   getDisplayIngredients,
   getDisplaySteps,
-} from "../../utils/generateRecipe";
+} from "../../../utils/generateRecipe";
 
 export default async function Recipe({ params }) {
   const { id } = params;
@@ -19,7 +19,7 @@ export default async function Recipe({ params }) {
   return (
     <div className={styles.grid}>
       <div className={styles.gridTitle}>
-        <h1>{pageInfo.properties.Name.title[0]?.text.content}</h1>
+        <h1 className="text-4xl font-bold mb-3">{pageInfo.properties.Name.title[0]?.text.content}</h1>
         <div style={{ position: "relative", width: "90%", height: "90%" }}>
           <Image
             src={`${pageInfo.cover.file.url}`}
@@ -39,10 +39,12 @@ export default async function Recipe({ params }) {
         <p>Autor: {pageInfo.properties.Person.people[0].name}</p>
         <p>{getUserInfo()}</p>
         <hr />
-        <div>
-          Categoria/s:
+        <div className='mb-2'>
+          <p className='mb-2'>Categoria/s</p>
           {pageInfo.properties.Select.multi_select.map((tag) => (
-            <div key={tag.name}>#{tag.name}</div>
+            <p className='bg-amber-100 rounded-full px-3 py-1 w-fit inline' key={tag.name}>
+              {tag.name}
+            </p>
           ))}
         </div>
         <p>Dificultad: {pageInfo.properties.Dificultad.select.name}</p>

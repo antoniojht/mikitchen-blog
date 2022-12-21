@@ -4,12 +4,16 @@ import { Client } from "@notionhq/client";
 import styles from "./page.module.css";
 
 export default async function Home() {
-  const recipes = await getRecipes();
+  const resRecipes = getRecipes();
+  const resCategories = getCategories();
+
+  const [recipes, categories] = await Promise.all([resRecipes, resCategories]);
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>Bienvenido a miKitchen!</h1>
-      <main className={styles.main}>
+    <div>
+      <h1 className="text-3xl font-bold">Bienvenido a miKitchen!</h1>
+      <main>
+        <h2 className="text-2xl font bold">Ultimas recetas</h2>
         <div className={styles.grid}>
           {recipes.map((recipe) => {
             return (
@@ -26,6 +30,16 @@ export default async function Home() {
                   height={180}
                 />
               </Link>
+            );
+          })}
+        </div>
+        <div>
+          <h2 className="text-2xl font bold">Categorias</h2>
+          {categories.map((category) => {
+            return (
+              <div className="inline pr-5 text-center" p key={category}>
+                {category}
+              </div>
             );
           })}
         </div>
@@ -49,4 +63,29 @@ export async function getRecipes() {
   });
 
   return response.results;
+}
+
+export async function getCategories() {
+  const notion = new Client({ auth: process.env.NOTION_API_KEY });
+
+  const databaseId = "0902a65f0e1d4c3891d1db544993f4c4";
+
+  const response = await notion.databases.query({
+    database_id: databaseId,
+    filter: {
+      property: "Select",
+      multi_select: {
+        is_not_empty: true,
+      },
+    },
+  });
+
+  const multiSelect = response.results.map(
+    (page) => page.properties.Select.multi_select
+  );
+  const joinSelect = multiSelect
+    .reduce((prev, curr) => prev.concat(curr))
+    .map((tag) => tag.name);
+
+  return joinSelect;
 }
