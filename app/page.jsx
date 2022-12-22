@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Client } from "@notionhq/client";
 import styles from "./page.module.css";
+import { Card } from "../components/Card";
 
 export default async function Home() {
   const resRecipes = getRecipes();
@@ -17,29 +17,22 @@ export default async function Home() {
         <div className={styles.grid}>
           {recipes.map((recipe) => {
             return (
-              <Link
+              <Card
                 key={recipe.id}
-                href={`/recipe/${recipe.id}`}
-                className={styles.card}
-              >
-                <h2>{recipe.properties.Name.title[0].text.content}</h2>
-                <Image
-                  src={`${recipe.cover.file.url}`}
-                  alt={`Cover image for recipe ${recipe.properties.Name.title[0].text.content}`}
-                  width={220}
-                  height={180}
-                />
-              </Link>
+                title={`${recipe.properties.Name.title[0].text.content}`}
+                src={`${recipe.cover.file.url}`}
+                slug={`/recipes/${recipe.id}`}
+              />
             );
           })}
         </div>
         <div>
-          <h2 className="text-2xl font bold">Categorias</h2>
+          <h2 className="text-2xl font bold">Categorías mas vistas</h2>
           {categories.map((category) => {
             return (
               <Link
                 className="inline pr-5 text-center"
-                href={`category/${category}`}
+                href={`categories/${category}`}
                 key={category}
               >
                 {category}
@@ -64,7 +57,7 @@ export async function getRecipes() {
         equals: "Done",
       },
     },
-    page_size: 4,
+    page_size: 5,
   });
 
   return response.results;
@@ -83,6 +76,7 @@ export async function getCategories() {
         is_not_empty: true,
       },
     },
+    page_size: 6,
   });
 
   const multiSelect = response.results.map(

@@ -8,7 +8,7 @@ export default async function Recipes({ params }) {
     <>
       <h1 className="text-3xl font-bold">Recetas de {params.slug}</h1>
       {recipes.map((recipe) => (
-        <Link href={`recipe/${recipe.id}`} key={recipe.id}>
+        <Link href={`../recipes/${recipe.id}`} key={recipe.id}>
           {recipe.properties.Name.title[0].text.content}
         </Link>
       ))}

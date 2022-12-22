@@ -6,6 +6,14 @@ export function Header() {
       <Link href="/">
         <b className="font-extrabold	">mi</b>Kitchen
       </Link>
+      <div className='flex gap-3'>
+        <Link href="/categories">
+          <p>Categorías</p>
+        </Link>
+        <Link href="/recipes">
+          <p>Recetas</p>
+        </Link>
+      </div>
     </header>
   );
 }
