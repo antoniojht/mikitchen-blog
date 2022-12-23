@@ -1,6 +1,6 @@
-import { Client } from "@notionhq/client";
 import { Card } from "../../components/Card";
 import styles from './page.module.css';
+import { Client } from "@notionhq/client";
 
 export default async function Recipes() {
   const recipes = await getRecipes();
@@ -14,7 +14,7 @@ export default async function Recipes() {
                 key={recipe.id}
                 title={`${recipe.properties.Name.title[0].text.content}`}
                 src={`${recipe.cover.file.url}`}
-                slug={`/recipe/${recipe.id}`}
+                slug={`/recipes/${recipe.id}`}
               />
             );
           })}

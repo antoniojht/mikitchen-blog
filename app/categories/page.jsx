@@ -11,7 +11,7 @@ export default async function Categories() {
         return (
           <Link
             className="inline pr-5 text-center"
-            href={`category/${category}`}
+            href={`categories/${category}`}
             key={category}
           >
             {category}

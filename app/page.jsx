@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Client } from "@notionhq/client";
 import styles from "./page.module.css";
 import { Card } from "../components/Card";
+import { Client } from "@notionhq/client";
 
 export default async function Home() {
   const resRecipes = getRecipes();
@@ -32,7 +32,7 @@ export default async function Home() {
             return (
               <Link
                 className="inline pr-5 text-center"
-                href={`categories/${category}`}
+                href={`/categories/${category}`}
                 key={category}
               >
                 {category}

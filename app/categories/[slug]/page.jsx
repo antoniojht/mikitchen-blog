@@ -1,5 +1,5 @@
-import { Client } from "@notionhq/client";
 import Link from "next/link";
+import { Client } from "@notionhq/client";
 
 export default async function Recipes({ params }) {
   const recipes = await getRecipesByCategory(params.slug);
