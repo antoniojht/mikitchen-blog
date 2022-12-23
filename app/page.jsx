@@ -12,7 +12,8 @@ export default async function Home() {
   return (
     <div>
       <h1 className="text-3xl font-bold">Bienvenido a miKitchen!</h1>
-      <main>
+
+      <article>
         <h2 className="text-2xl font bold">Ultimas recetas</h2>
         <div className={styles.grid}>
           {recipes.map((recipe) => {
@@ -26,21 +27,21 @@ export default async function Home() {
             );
           })}
         </div>
-        <div>
-          <h2 className="text-2xl font bold">Categorías mas vistas</h2>
-          {categories.map((category) => {
-            return (
-              <Link
-                className="inline pr-5 text-center"
-                href={`/categories/${category}`}
-                key={category}
-              >
-                {category}
-              </Link>
-            );
-          })}
-        </div>
-      </main>
+      </article>
+      <article>
+        <h2 className="text-2xl font bold">Categorías mas vistas</h2>
+        {categories.map((category) => {
+          return (
+            <Link
+              className="inline pr-5 text-center"
+              href={`/categories/${category}`}
+              key={category}
+            >
+              {category}
+            </Link>
+          );
+        })}
+      </article>
     </div>
   );
 }
