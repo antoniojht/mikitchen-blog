@@ -2,8 +2,12 @@
 
 import { useState } from "react";
 
-export function Range() {
-  const [value, setValue] = useState(720);
+export function Range({ getRange }) {
+  const [value, setValue] = useState(0);
+
+  const handleChange = (e) => {
+    getRange(e.target.value);
+  };
 
   return (
     <>
@@ -13,7 +17,9 @@ export function Range() {
         min="0"
         max="1440"
         step="1"
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => {
+          setValue(e.target.value), handleChange(e);
+        }}
       />
       <output id="value">Máx. {value}min</output>
     </>

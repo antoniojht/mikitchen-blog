@@ -13,6 +13,7 @@ export function Card({ title, src, slug }) {
         alt={`Image for ${title}`}
         className="object-center object-cover w-full h-full rounded-lg"
         fill={true}
+        priority={true}
       />
 
       <div className="bg-white p-4 absolute bottom-0 w-full rounded-b-lg">

@@ -18,9 +18,6 @@ export default async function handler(req, res) {
   const multiSelect = response.results.map(
     (page) => page.properties.Select.multi_select
   );
-  const joinSelect = multiSelect
-    .reduce((prev, curr) => prev.concat(curr))
-    .map((tag) => tag.name);
 
-  res.status(200).json(joinSelect);
+  res.status(200).json(multiSelect.flat());
 }

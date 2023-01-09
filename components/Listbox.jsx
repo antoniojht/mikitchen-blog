@@ -6,12 +6,21 @@ import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
 const listBoxOptions = [{ name: "Seleccione una opción..." }];
 
-export function MyListbox({ list }) {
+export function MyListbox({ list, getSelected }) {
   const [selected, setSelected] = useState(listBoxOptions[0]);
+
+  const handleChange = (e) => {
+    getSelected(e.name);
+  };
 
   return (
     <div className="w-72">
-      <Listbox value={selected} onChange={setSelected}>
+      <Listbox
+        value={selected}
+        onChange={(e) => {
+          setSelected(e), handleChange(e);
+        }}
+      >
         <div className="relative mt-1">
           <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
             <span className="block truncate">{selected.name}</span>

@@ -10,7 +10,7 @@ export default function RootLayout({ children }) {
       <body>
         <Header />
         <main className={styles.container}>{children}</main>
-        <Footer />
+        {/* <Footer /> */}
       </body>
     </html>
   );

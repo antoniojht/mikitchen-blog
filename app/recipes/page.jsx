@@ -1,27 +1,123 @@
-import { Card } from "../../components/Card";
-import { Client } from "@notionhq/client";
-import { Range } from "../../components/Range";
-import { MyListbox } from "../../components/Listbox";
+"use client";
 
+import { useEffect, useState } from "react";
+import { Card } from "../../components/Card";
+import { MyPopover } from "../../components/MyPopover";
+import { MyListbox } from "../../components/Listbox";
+import { Range } from "../../components/Range";
 import { dificultad } from "../../utils/constants/dificultad";
 import styles from "./page.module.css";
 
-import { MyPopover } from "../../components/MyPopover";
+export default function Recipes() {
+  const [categories, setCategories] = useState([]);
+  const [recipes, setRecipes] = useState([]);
+  const [range, setRange] = useState(0);
+  const [dificulty, setDificulty] = useState("");
+  const [category, setCategory] = useState("");
 
-export default async function Recipes() {
-  // TODO - FILTROS: Tiempo total en minutos (Tiempo_coccion + Tiempo_elaboracion), etiqueta (Select), dificultad (Dificultad) ---> Eventos que modifiquen las recetas mostradas.
-  // TODO - Paginacion.
-  const recipes = await getRecipes();
-  const categories = await getCategories();
+  useEffect(() => {
+    fetch("api/categories")
+      .then((res) => res.json())
+      .then((resultsFromApi) => {
+        setCategories(resultsFromApi);
+      });
+  }, []);
+
+  useEffect(() => {
+    fetch("api/recipes/filter", {
+      method: "POST",
+    })
+      .then((res) => res.json())
+      .then((resultsFromApi) => {
+        setRecipes(resultsFromApi);
+      });
+  }, [recipes]);
+
+  const handleCategory = (category) => {
+    setCategory(category);
+  };
+
+  const handleDificulty = (dificulty) => {
+    setDificulty(dificulty);
+  };
+
+  const handleRange = (range) => {
+    setRange(range);
+  };
+
+  const handleRecipes = () => {
+    const filters = {
+      and: [
+        {
+          property: "Tags",
+          status: {
+            equals: "Done",
+          },
+        },
+      ],
+    };
+
+    if (category.length > 0) {
+      filters.and.push({
+        property: "Select",
+        multi_select: {
+          contains: category,
+        },
+      });
+    }
+
+    if (dificulty.length > 0) {
+      filters.and.push({
+        property: "Dificultad",
+        select: {
+          equals: dificulty,
+        },
+      });
+    }
+
+    if (range > 0) {
+      filters.and.push({
+        property: "Tiempo_total",
+        number: {
+          less_than_or_equal_to: Number(range),
+        },
+      });
+    }
+
+    fetch("/api/recipes/filter", {
+      method: "POST",
+      body: JSON.stringify(filters),
+    })
+      .then((res) => res.json())
+      .then((resultFromApi) => {
+        setRecipes(resultFromApi);
+      });
+  };
+
   return (
     <>
       <h1 className="text-3xl font-bold mb-4">Recetas</h1>
       <MyPopover title={"Filtros"}>
         <div>
-          Tiempo total <Range />
-          <br />
-          Categoria <MyListbox list={categories} />
-          Dificultad <MyListbox list={dificultad} />
+          <div className="mb-4">
+            <span>
+              <b>Tiempo total </b>
+            </span>
+            <Range getRange={handleRange} />
+          </div>
+          <div className="mb-4">
+            <span>
+              <b>Categoria</b>
+            </span>
+            <MyListbox list={categories} getSelected={handleCategory} />
+          </div>
+          <div className="mb-4">
+            <span>
+              <b>Dificultad</b>
+            </span>
+            <MyListbox list={dificultad} getSelected={handleDificulty} />
+          </div>
+          <button onClick={handleRecipes}>Aplicar</button>
         </div>
       </MyPopover>
 
@@ -39,45 +135,4 @@ export default async function Recipes() {
       </div>
     </>
   );
-}
-
-export async function getRecipes() {
-  const notion = new Client({ auth: process.env.NOTION_API_KEY });
-
-  const databaseId = "0902a65f0e1d4c3891d1db544993f4c4";
-  const response = await notion.databases.query({
-    database_id: databaseId,
-    filter: {
-      property: "Tags",
-      status: {
-        equals: "Done",
-      },
-    },
-    page_size: 5,
-  });
-
-  return response.results;
-}
-
-export async function getCategories() {
-  const notion = new Client({ auth: process.env.NOTION_API_KEY });
-
-  const databaseId = "0902a65f0e1d4c3891d1db544993f4c4";
-
-  const response = await notion.databases.query({
-    database_id: databaseId,
-    filter: {
-      property: "Select",
-      multi_select: {
-        is_not_empty: true,
-      },
-    },
-    page_size: 6,
-  });
-
-  const multiSelect = response.results.map(
-    (page) => page.properties.Select.multi_select
-  );
-
-  return multiSelect[1];
 }
