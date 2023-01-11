@@ -1,6 +1,11 @@
 .grid {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   flex-wrap: wrap;
   max-width: 1200px;
+}
+
+.grid > a {
+  margin: 1.25rem;
 }

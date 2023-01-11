@@ -18,7 +18,7 @@ export default function Search() {
     fetch(`/api/recipes/text?q=${event.target.value}`)
       .then((res) => res.json())
       .then((resultsFromApi) => {
-        setResults(resultsFromApi);
+        setResults([...new Set(resultsFromApi)]);
       });
   };
 
@@ -32,9 +32,9 @@ export default function Search() {
       />
 
       {results.length > 0 && (
-        <Combobox.Options className="absolute w-full overflow-hidden bg-white hover:bg-slate-200 border border-gray-300 rounded-t-none shadow-lg rounded-md list-none p-3 cursor-pointer">
+        <Combobox.Options className="absolute z-[2] w-full overflow-hidden bg-white rounded-t-none shadow-lg rounded-md list-none p-3 cursor-pointer">
           {results.map((recipe) => (
-            <Combobox.Option key={recipe.id} value={recipe}>
+            <Combobox.Option key={recipe.id} value={recipe} className="p-1 hover:bg-slate-200">
               {recipe.properties.Name.title[0].text.content}
             </Combobox.Option>
           ))}

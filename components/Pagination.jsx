@@ -1,4 +1,4 @@
-export default function Pagination() {
+export function Pagination() {
   return(
     <>
       <p>Siguiente</p>

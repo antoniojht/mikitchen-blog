@@ -19,5 +19,12 @@ export default async function handler(req, res) {
     (page) => page.properties.Select.multi_select
   );
 
-  res.status(200).json(multiSelect.flat());
+  const uniqueTags = multiSelect.flat().reduce((accumulator, current) => {
+    if (!accumulator.find((item) => item.id === current.id)) {
+      accumulator.push(current);
+    }
+    return accumulator;
+  }, []);
+
+  res.status(200).json(uniqueTags);
 }

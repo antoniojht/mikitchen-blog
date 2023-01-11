@@ -6,6 +6,7 @@ import { MyPopover } from "../../components/MyPopover";
 import { MyListbox } from "../../components/Listbox";
 import { Range } from "../../components/Range";
 import { dificultad } from "../../utils/constants/dificultad";
+import { Pagination } from "../../components/Pagination";
 import styles from "./page.module.css";
 
 export default function Recipes() {
@@ -26,12 +27,13 @@ export default function Recipes() {
   useEffect(() => {
     fetch("api/recipes/filter", {
       method: "POST",
+      cache: "no-store",
     })
       .then((res) => res.json())
       .then((resultsFromApi) => {
         setRecipes(resultsFromApi);
       });
-  }, [recipes]);
+  }, []);
 
   const handleCategory = (category) => {
     setCategory(category);
@@ -87,6 +89,7 @@ export default function Recipes() {
     fetch("/api/recipes/filter", {
       method: "POST",
       body: JSON.stringify(filters),
+      cache: "no-store",
     })
       .then((res) => res.json())
       .then((resultFromApi) => {
@@ -122,17 +125,22 @@ export default function Recipes() {
       </MyPopover>
 
       <div className={styles.grid}>
-        {recipes.map((recipe) => {
-          return (
-            <Card
-              key={recipe.id}
-              title={`${recipe.properties.Name.title[0].text.content}`}
-              src={`${recipe.cover.file.url}`}
-              slug={`/recipes/${recipe.id}`}
-            />
-          );
-        })}
+        {!recipes.results ? (
+          <h1>Loading...</h1>
+        ) : (
+          recipes.results.map((recipe) => {
+            return (
+              <Card
+                key={recipe.id}
+                title={`${recipe.properties.Name.title[0].text.content}`}
+                src={`${recipe.cover.file.url}`}
+                slug={`/recipes/${recipe.id}`}
+              />
+            );
+          })
+        )}
       </div>
+      {recipes.next_cursor ? <Pagination /> : null}
     </>
   );
 }

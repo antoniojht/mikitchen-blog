@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-export function Card({ title, src, slug }) {
+export function Card({ title, src, slug, dificulty, total_time }) {
   return (
     <Link
       href={slug}
@@ -18,6 +18,11 @@ export function Card({ title, src, slug }) {
 
       <div className="bg-white p-4 absolute bottom-0 w-full rounded-b-lg">
         <b>{title}</b>
+        <br />
+        <div className='flex justify-between'>
+          <span className={`text-slate-500 capitalize ${dificulty} rounded-lg px-3`}>{dificulty}</span>
+          <span className='text-slate-500'>Tiempo: {total_time}&quot;</span>
+        </div>
       </div>
     </Link>
   );

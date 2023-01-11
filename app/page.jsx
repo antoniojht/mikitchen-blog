@@ -2,6 +2,8 @@ import Link from "next/link";
 import styles from "./page.module.css";
 import { Card } from "../components/Card";
 import { Client } from "@notionhq/client";
+import { DATABASE_ID } from "../utils/constants/request";
+import { CategoryCard } from "./categories/components/CategoryCard";
 
 export default async function Home() {
   const resRecipes = getRecipes();
@@ -14,7 +16,7 @@ export default async function Home() {
       <h1 className="text-3xl font-bold">Bienvenido a miKitchen!</h1>
 
       <article>
-        <h2 className="text-2xl font bold">Ultimas recetas</h2>
+        <h2 className="text-2xl font-bold mb-4">Ultimas recetas</h2>
         <div className={styles.grid}>
           {recipes.map((recipe) => {
             return (
@@ -23,24 +25,24 @@ export default async function Home() {
                 title={`${recipe.properties.Name.title[0].text.content}`}
                 src={`${recipe.cover.file.url}`}
                 slug={`/recipes/${recipe.id}`}
+                dificulty={`${recipe.properties.Dificultad.select.name}`}
+                total_time={`${recipe.properties.Tiempo_total.number}`}
               />
             );
           })}
         </div>
       </article>
       <article>
-        <h2 className="text-2xl font bold">Categorías mas vistas</h2>
-        {categories.map((category) => {
-          return (
-            <Link
-              className="inline pr-5 text-center"
-              href={`/categories/${category}`}
-              key={category}
-            >
-              {category}
-            </Link>
-          );
-        })}
+        <h2 className="text-2xl font-bold mt-4 mb-4">Categorías mas vistas</h2>
+        <div className="flex justify-between flex-wrap">
+          {categories.map((category) => {
+            return (
+              <Link href={`/categories/${category.name}`} key={category.id}>
+                <CategoryCard name={category.name} color={category.color} />
+              </Link>
+            );
+          })}
+        </div>
       </article>
     </div>
   );
@@ -49,16 +51,15 @@ export default async function Home() {
 export async function getRecipes() {
   const notion = new Client({ auth: process.env.NOTION_API_KEY });
 
-  const databaseId = "0902a65f0e1d4c3891d1db544993f4c4";
   const response = await notion.databases.query({
-    database_id: databaseId,
+    database_id: DATABASE_ID,
     filter: {
       property: "Tags",
       status: {
         equals: "Done",
       },
     },
-    page_size: 5,
+    page_size: 6,
   });
 
   return response.results;
@@ -67,10 +68,8 @@ export async function getRecipes() {
 export async function getCategories() {
   const notion = new Client({ auth: process.env.NOTION_API_KEY });
 
-  const databaseId = "0902a65f0e1d4c3891d1db544993f4c4";
-
   const response = await notion.databases.query({
-    database_id: databaseId,
+    database_id: DATABASE_ID,
     filter: {
       property: "Select",
       multi_select: {
@@ -83,9 +82,13 @@ export async function getCategories() {
   const multiSelect = response.results.map(
     (page) => page.properties.Select.multi_select
   );
-  const joinSelect = multiSelect
-    .reduce((prev, curr) => prev.concat(curr))
-    .map((tag) => tag.name);
 
-  return joinSelect;
+  const uniqueTags = multiSelect.flat().reduce((accumulator, current) => {
+    if (!accumulator.find((item) => item.id === current.id)) {
+      accumulator.push(current);
+    }
+    return accumulator;
+  }, []);
+
+  return uniqueTags.slice(0, 6);
 }

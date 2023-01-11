@@ -22,7 +22,7 @@ export default async function Recipe({ params }) {
         <h1 className="text-4xl font-bold mb-3">
           {pageInfo.properties.Name.title[0]?.text.content}
         </h1>
-        <div style={{ position: "relative", width: "90%", height: "90%" }}>
+        <div style={{ position: "relative", width: "100%", height: "100%" }}>
           <Image
             src={`${pageInfo.cover.file.url}`}
             alt={`Image cover}`}

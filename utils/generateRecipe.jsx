@@ -24,7 +24,7 @@ export const getDisplayIngredients = (blockPage) => {
     }
   });
 
-  return <div className="ingredients">{jsx}</div>;
+  return <div>{jsx}</div>;
 };
 
 export const getDisplaySteps = (blockPage) => {
@@ -75,5 +75,13 @@ export const getDisplaySteps = (blockPage) => {
     }
   });
 
-  return <div className="steps">{jsx}</div>;
+  return (
+    <div
+      style={{
+        gridColumn: "1/3",
+      }}
+    >
+      {jsx}
+    </div>
+  );
 };
