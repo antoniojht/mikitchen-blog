@@ -3,7 +3,9 @@
 @tailwind utilities;
 
 @layer base {
-  ul, ol {
+
+  ul,
+  ol {
     list-style: revert;
     padding: revert;
   }
@@ -22,4 +24,19 @@
 .dificil {
   background-color: rgba(196, 85, 77, 0.65);
   color: #FAECEC;
+}
+
+.about {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.about::after,
+.about::before {
+  content: '';
+  flex: 1 1 auto;
+  margin: 1rem;
+  border-bottom: solid 1px #00000058;
 }

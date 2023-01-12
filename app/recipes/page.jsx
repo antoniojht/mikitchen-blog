@@ -135,6 +135,8 @@ export default function Recipes() {
                 title={`${recipe.properties.Name.title[0].text.content}`}
                 src={`${recipe.cover.file.url}`}
                 slug={`/recipes/${recipe.id}`}
+                dificulty={recipe.properties.Dificultad.select.name}
+                total_time={recipe.properties.Tiempo_total.number}
               />
             );
           })

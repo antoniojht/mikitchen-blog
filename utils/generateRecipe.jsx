@@ -1,5 +1,25 @@
 import Image from "next/image";
 
+export const getIngredients = (blockPage) => {
+  const ingredients = [];
+
+  blockPage.map((block) => {
+    if (block.type === "bulleted_list_item") {
+      const ingredientQuantity =
+        block.bulleted_list_item.rich_text[0]?.text.content;
+
+      const ingredient = {
+        name: ingredient.split(" ").slice(0, -1).join(" "),
+        quantity: ingredient.split(" ").at(-1),
+      };
+
+      ingredients.push(ingredient);
+    }
+  });
+
+  return ingredients;
+};
+
 export const getDisplayIngredients = (blockPage) => {
   const jsx = [];
 
@@ -24,7 +44,7 @@ export const getDisplayIngredients = (blockPage) => {
     }
   });
 
-  return <div>{jsx}</div>;
+  return <div style={{ marginTop: "4rem" }}>{jsx}</div>;
 };
 
 export const getDisplaySteps = (blockPage) => {
@@ -45,7 +65,7 @@ export const getDisplaySteps = (blockPage) => {
 
     if (block.type === "numbered_list_item") {
       jsx.push(
-        <ol start={counterNumberedList++}>
+        <ol start={counterNumberedList++} className="mb-3">
           <li>{block.numbered_list_item.rich_text[0]?.text.content}</li>
         </ol>
       );
@@ -57,7 +77,7 @@ export const getDisplaySteps = (blockPage) => {
           style={{
             position: "relative",
             width: "80%",
-            height: "80%",
+            height: "100%",
             marginLeft: "2.625rem",
           }}
         >
@@ -79,6 +99,7 @@ export const getDisplaySteps = (blockPage) => {
     <div
       style={{
         gridColumn: "1/3",
+        marginTop: "4rem",
       }}
     >
       {jsx}

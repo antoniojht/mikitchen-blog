@@ -8,6 +8,7 @@ export function Avatar({url}) {
       height={100}
       style={{ borderRadius: 100 }}
       alt={"Avatar of the author of this post"}
+      className='m-auto'
     />
   );
 }

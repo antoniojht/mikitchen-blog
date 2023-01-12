@@ -1,12 +1,14 @@
 import Image from "next/image";
+import Link from 'next/link';
 import { Client } from "@notionhq/client";
 import styles from "./page.module.css";
-import { Avatar } from "../../../components/Avatar";
 import getUserInfo from "../../../utils/constants/userInfo";
 import {
   getDisplayIngredients,
   getDisplaySteps,
 } from "../../../utils/generateRecipe";
+import Author from "../../../components/Author";
+import { Pill } from "../../../components/Pills";
 
 export default async function Recipe({ params }) {
   const { id } = params;
@@ -34,36 +36,49 @@ export default async function Recipe({ params }) {
             priority={true}
           />
         </div>
-      </div>
-      <div className={styles.gridAuthor}>
-        <p>Sobre mi: </p>
-        <Avatar url={pageInfo.properties.Person.people[0].avatar_url} />
-        <p>Autor: {pageInfo.properties.Person.people[0].name}</p>
-        <p>{getUserInfo()}</p>
-        <hr />
-        <div className="mb-2">
-          <p className="mb-2">Categoria/s</p>
-          {pageInfo.properties.Select.multi_select.map((tag) => (
-            <p
-              className="bg-amber-100 rounded-full px-3 py-1 w-fit inline"
-              key={tag.name}
-            >
-              {tag.name}
-            </p>
-          ))}
+        <div className="flex gap-3 my-4 justify-between">
+          <div className="flex gap-4">
+            <Pill name={pageInfo.properties.Dificultad.select.name} />
+            <div className="flex gap-2">
+              <Image
+                src="/assets/kitchen-pack-oven-svgrepo-com.svg"
+                alt="svg time"
+                width={16}
+                height={16}
+              />
+              Cocción: {pageInfo.properties.Tiempo_coccion.number}&quot;
+            </div>
+            <div className="flex gap-2">
+              <Image
+                src="/assets/kitchen-pack-svgrepo-com.svg"
+                alt="svg time"
+                width={16}
+                height={16}
+              />
+              Elaboración: {pageInfo.properties.Tiempo_elaboracion.number}&quot;
+            </div>
+          </div>
+          <div>
+            {pageInfo.properties.Select.multi_select.map((tag) => (
+              <Link href={`/categories/${tag.name}`} key={tag.id}>
+                <p
+                  className={`text-slate-500 px-3 py-1 w-fit inline`}
+                  key={tag.name}
+                >
+                  #{tag.name}
+                </p>
+              </Link>
+            ))}
+          </div>
         </div>
-        <p>Dificultad: {pageInfo.properties.Dificultad.select.name}</p>
-        <p>Tiempo coccion: {pageInfo.properties.Tiempo_coccion.number} min</p>
-        <p>
-          Tiempo elaboración: {pageInfo.properties.Tiempo_elaboracion.number}{" "}
-          min
-        </p>
-        <p>
-          Tiempo total:{" "}
-          {pageInfo.properties.Tiempo_elaboracion.number +
-            pageInfo.properties.Tiempo_coccion.number}{" "}
-          min
-        </p>
+        <hr />
+      </div>
+      <div className={`${styles.gridAuthor} mt-[35.2]`}>
+        <Author
+          avatar={pageInfo.properties.Person.people[0].avatar_url}
+          name={pageInfo.properties.Person.people[0].name}
+          bio={getUserInfo()}
+        />
       </div>
       {getDisplaySteps(blockPage)}
       {getDisplayIngredients(blockPage)}
