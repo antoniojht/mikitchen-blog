@@ -1,9 +1,8 @@
-import Link from "next/link";
-import styles from "./page.module.css";
-import { Card } from "../components/Card";
+import Image from "next/image";
 import { Client } from "@notionhq/client";
 import { DATABASE_ID } from "../utils/constants/request";
-import { CategoryCard } from "./categories/components/CategoryCard";
+import { MostlyVisitedCategories } from "../components/MostlyVisitedCategories";
+import { MostlyVisitedRecipes } from "../components/MostlyVisitedRecipes";
 
 export default async function Home() {
   const resRecipes = getRecipes();
@@ -11,40 +10,38 @@ export default async function Home() {
 
   const [recipes, categories] = await Promise.all([resRecipes, resCategories]);
 
-  return (
-    <div>
-      <h1 className="text-3xl font-bold">Bienvenido a miKitchen!</h1>
+  const mainRecipe = { ...recipes[0] };
 
-      <article>
-        <h2 className="text-2xl font-bold mb-4">Ultimas recetas</h2>
-        <div className={styles.grid}>
-          {recipes.map((recipe) => {
-            return (
-              <Card
-                key={recipe.id}
-                title={`${recipe.properties.Name.title[0].text.content}`}
-                src={`${recipe.cover.file.url}`}
-                slug={`/recipes/${recipe.id}`}
-                dificulty={`${recipe.properties.Dificultad.select.name}`}
-                total_time={`${recipe.properties.Tiempo_total.number}`}
+  return (
+    <main>
+      <h1 className="text-3xl font-bold">Bienvenido a miKitchen!</h1>
+      <section>
+        <article>
+          <h2 className="text-2xl font-bold mb-4">
+            Échale un vistazo a nuestra última receta
+          </h2>
+          <div>
+            <div style={{ width: "50%", height: "50%", position: "relative" }}>
+              <Image
+                src={`${mainRecipe.cover.file.url}`}
+                fill={true}
+                className="object-cover"
+                alt="Cover image showing latest recipe from blog"
               />
-            );
-          })}
-        </div>
-      </article>
-      <article>
-        <h2 className="text-2xl font-bold mt-4 mb-4">Categorías mas vistas</h2>
-        <div className="flex justify-between flex-wrap">
-          {categories.map((category) => {
-            return (
-              <Link href={`/categories/${category.name}`} key={category.id}>
-                <CategoryCard name={category.name} color={category.color} />
-              </Link>
-            );
-          })}
-        </div>
-      </article>
-    </div>
+            </div>
+            <div>
+              <p>{`${mainRecipe.properties.Name.title[0].text.content}`}</p>
+              <p>
+                Dificultad: {`${mainRecipe.properties.Dificultad.select.name}`}
+              </p>
+              <p>Tiempo: {`${mainRecipe.properties.Tiempo_total.number}`}</p>
+            </div>
+          </div>
+        </article>
+        <MostlyVisitedRecipes recipes={recipes.slice(1)} />
+        <MostlyVisitedCategories categories={categories} />
+      </section>
+    </main>
   );
 }
 
@@ -59,7 +56,13 @@ export async function getRecipes() {
         equals: "Done",
       },
     },
-    page_size: 6,
+    sorts: [
+      {
+        property: "created_time",
+        direction: "descending",
+      },
+    ],
+    page_size: 7,
   });
 
   return response.results;

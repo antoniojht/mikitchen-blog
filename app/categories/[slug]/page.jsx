@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { Client } from "@notionhq/client";
+import { MostlyVisitedRecipes } from "../../../components/MostlyVisitedRecipes";
 
 export default async function Recipes({ params }) {
   const recipes = await getRecipesByCategory(params.slug);
@@ -7,11 +7,7 @@ export default async function Recipes({ params }) {
   return (
     <>
       <h1 className="text-3xl font-bold">Recetas de {params.slug}</h1>
-      {recipes.map((recipe) => (
-        <Link href={`../recipes/${recipe.id}`} key={recipe.id}>
-          {recipe.properties.Name.title[0].text.content}
-        </Link>
-      ))}
+      <MostlyVisitedRecipes recipes={recipes} />
     </>
   );
 }
